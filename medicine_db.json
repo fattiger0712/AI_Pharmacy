@@ -1,0 +1,58 @@
+{
+    "氨酚烷胺那敏胶囊": {
+        "symptoms": ["感冒发热", "头痛", "鼻塞流涕"],
+        "location": "第十四行第一列",
+        "contraindications": ["严重肝肾功能不全者", "孕妇及哺乳期妇女"],
+        "usage": "每次1粒，每日2次",
+        "OTC": true
+    },
+    "感冒灵颗粒": {
+        "symptoms": ["感冒","发热", "头痛"],
+        "location": "18行1列",
+        "contraindications": ["无"],
+        "usage": "开水冲服，一次1袋，一日3次",
+        "OTC": true
+    },
+    "小柴胡颗粒": {
+        "symptoms": ["感冒发热", "胸胁苦满"],
+        "location": "18行6列",
+        "contraindications": ["无"],
+        "usage": "开水冲服，一次1-2袋，一日3次",
+        "OTC": true
+    },
+    "布洛芬缓释胶囊": {
+        "symptoms": ["头痛", "牙痛", "肌肉痛", "发热"],
+        "location": "第一行第三列",
+        "contraindications": ["消化道溃疡", "孕妇"],
+        "usage": "每次1粒，每日不超过2次",
+        "OTC": true
+    },
+    "蒙脱石散": {
+        "symptoms": ["腹泻"],
+        "location": "第二行第二列",
+        "contraindications": ["无"],
+        "usage": "每次1袋，每日3次",
+        "OTC": true
+    },
+        "复方氯化钠滴眼液": {
+        "symptoms": ["眼部干燥", "视疲劳", "结膜充血"],
+        "location": "第七行第七列",
+        "contraindications": ["眼部感染"],
+        "usage": "每次1-2滴，每日3-5次",
+        "OTC": true
+    },
+    "舒肝片": {
+        "symptoms": ["胃口不好", "胸胀痛"],
+        "location": "第七行第八列",
+        "contraindications": ["孕妇", "严重肝病患者"],
+        "usage": "每次4片，每日3次",
+        "OTC": true
+    },
+    "小儿化痰止咳颗粒": {
+        "symptoms": ["小儿咳嗽", "痰多声哑", "气促"],
+        "location": "第八行第一列",
+        "contraindications": ["糖尿病患儿"],
+        "usage": "1-3岁每次4g，4-7岁每次5g，8-14岁每次6g，每日3次",
+        "OTC": true
+    }
+}
