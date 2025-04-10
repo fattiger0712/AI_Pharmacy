@@ -1,8 +1,9 @@
+'''
 import speech_recognition as sr
 import pyttsx3
 import platform
 import os
-from config import WHISPER_MODEL, ENABLE_T2S_CONVERSION, SIMULATE_HARDWARE
+from config import  ENABLE_T2S_CONVERSION, SIMULATE_HARDWARE
 from opencc import OpenCC  # 确保已安装opencc==1.1.6
 
 
@@ -129,3 +130,99 @@ if __name__ == "__main__":
                 break
         else:
             va.speak("未能识别到有效输入")
+'''
+import platform
+
+import pyaudio
+import wave
+import numpy as np
+import pyttsx3
+from funasr import AutoModel
+from sympy.physics.units import sr
+
+from config import MODEL_SETTINGS, AUDIO_DEVICE
+
+
+class SpeechRecognizer:
+    def __init__(self):
+        # 初始化FunASR模型（单例模式）
+        self.model = AutoModel(**MODEL_SETTINGS)
+        self.engine = self._init_tts_engine()
+        # 音频流配置
+        self.audio = pyaudio.PyAudio()
+        self.stream = self.audio.open(
+            rate=16000,
+            format=pyaudio.paInt16,
+            channels=2,  # ReSpeaker双麦克风
+            input=True,
+            input_device_index=AUDIO_DEVICE["input_index"],
+            frames_per_buffer=1024
+        )
+
+    def _init_tts_engine(self):
+        """初始化跨平台语音合成引擎"""
+        engine = pyttsx3.init()
+        # Linux系统配置
+        if platform.system() == 'Linux':
+            engine.setProperty('voice', 'chinese')
+            engine.setProperty('rate', 160)  # 调整语速
+
+            # 通用设置
+        engine.setProperty('volume', 0.9)  # 音量范围0.0-1.0
+        return engine
+
+    def record_audio(self, timeout=3):
+        """带VAD的录音"""
+        frames = []
+        silent_count = 0
+        for _ in range(int(16000 / 1024 * timeout)):
+            data = self.stream.read(1024)
+            audio_data = np.frombuffer(data, dtype=np.int16)
+            if self.is_silence(audio_data):
+                silent_count += 1
+                if silent_count > 10: break
+            else:
+                silent_count = 0
+                frames.append(data)
+        return b''.join(frames)
+    def speak(self, text, async_mode=False):
+        """增强版语音输出"""
+        print(f"[系统回复] {text}")
+        try:
+            if async_mode:
+                self.engine.startLoop(False)
+                self.engine.say(text)
+                self.engine.iterate()
+                self.engine.endLoop()
+            else:
+                self.engine.say(text)
+                self.engine.runAndWait()
+        except Exception as e:
+            print(f"[语音输出错误] {str(e)}")
+
+    def list_audio_devices(self):
+        """列出所有音频设备（调试用）"""
+        print("\n=== 可用音频设备 ===")
+        for index, name in enumerate(sr.Microphone.list_microphone_names()):
+            print(f"{index}: {name}")
+
+    @staticmethod
+    def is_silence(data, threshold=2000):
+        """静音检测"""
+        return np.abs(data).mean() < threshold
+
+    def recognize(self, audio_data):
+        """语音识别"""
+        with wave.open("temp.wav", 'wb') as wf:
+            wf.setnchannels(2)
+            wf.setsampwidth(2)
+            wf.setframerate(16000)
+            wf.writeframes(audio_data)
+        return self.model.generate(input="temp.wav")[0]['text']
+
+
+
+if __name__ == "__main__":
+    # 调试模式
+    va = SpeechRecognizer()
+    va.list_audio_devices()
